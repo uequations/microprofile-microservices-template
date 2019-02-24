@@ -1,0 +1,28 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.uequations'
+version = '1.0-SNAPSHOT'
+
+description = """ueq-microservices-template"""
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+
+
+repositories {
+        
+     maven { url "http://repo.maven.apache.org/maven2" }
+}
+dependencies {
+    compile group: 'io.helidon.microprofile.bundles', name: 'helidon-microprofile-1.2', version:'1.0.0'
+    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-binding', version:'2.26'
+    runtime group: 'org.jboss', name: 'jandex', version:'2.0.4.Final'
+    runtime group: 'javax.activation', name: 'javax.activation-api', version:'1.2.0'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version:'5.0.1'
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version:'5.0.1'
+}
