@@ -1,5 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'application'
+apply plugin: 'groovy'
 
 group = 'com.uequations'
 version = '1.0-SNAPSHOT'
@@ -8,16 +10,17 @@ description = """ueq-microservices-template"""
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+mainClassName = 'com.uequations.Main'
+
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
 
-
-
 repositories {
-        
      maven { url "http://repo.maven.apache.org/maven2" }
 }
+
 dependencies {
     compile group: 'io.helidon.microprofile.bundles', name: 'helidon-microprofile-1.2', version:'1.0.0'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-binding', version:'2.26'
@@ -25,4 +28,23 @@ dependencies {
     runtime group: 'javax.activation', name: 'javax.activation-api', version:'1.2.0'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version:'5.0.1'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version:'5.0.1'
+}
+
+task copyLibs(type: Copy) {
+    into "$buildDir/libs/cp"
+    from configurations.runtime
+}
+
+// add it as a dependency of built-in task 'assemble'
+copyLibs.dependsOn jar
+assemble.dependsOn copyLibs
+
+project.ext.manifestClasspath = configurations.runtime.collect{ File file -> "cp/"+file.name}.join(' ')
+
+jar {
+  archiveName = "${project.name}.jar"
+    manifest {
+        attributes ('Main-Class': "${mainClassName}",
+        "Class-Path" : project.ext.manifestClasspath)
+    }
 }
